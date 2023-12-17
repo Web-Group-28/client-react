@@ -1,0 +1,11 @@
+.course-box {
+   border: 1px solid black;
+   /* Black border with small weight */
+   padding: 20px;
+   /* Adjust the padding as needed */
+   text-align: center;
+   width: 20%;
+   /* Set the width to 20% */
+   margin-left: 40%;
+   margin-bottom:10px ;
+}
