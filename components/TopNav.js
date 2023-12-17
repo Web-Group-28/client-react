@@ -28,6 +28,11 @@ const TopNav = () => {
           <a>Register</a>
         </Link>
       </Item>
+      <Item>
+        <Link href='/courses'>
+          <a>Courses</a>
+        </Link>
+      </Item>
     </Menu>
   );
 };

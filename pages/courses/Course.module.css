@@ -1,0 +1,12 @@
+.courseBox {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.lessonLink {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+}

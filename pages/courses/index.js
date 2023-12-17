@@ -27,7 +27,7 @@ const Courses = () => {
         </h1>
         <div>
           {courses.map(course => {
-            return <div class="course-box">
+            return <div className="course-box">
               <Link href={`/courses/${course.courseID}`} key ={course.courseID}>
                 {course.title}
               </Link>
