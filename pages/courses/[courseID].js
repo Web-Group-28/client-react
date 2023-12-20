@@ -59,12 +59,12 @@ const Course = ({ courseID, lessonTitles, ids }) => {
          <ul>
             {lessonTitles.map((title, index) => {
                return <div className={styles.courseBox} key={ids[index]}>
-                  <Link href={`/lessons/${courseID}/${ids[index]}`}>
+                  <Link href={`/lesson/${courseID}/${ids[index]}`}>
                      <a className={styles.lessonLink}>{title}</a>
                   </Link>
                </div>
             })}
-            </ul>
+         </ul>
       </React.Fragment>
    );
 }
