@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import styles from './lesson.module.css';
+import Link from 'antd/lib/typography/Link';
 const tmpState = new Set([]);
 
 async function getQuiz(courseID, lessonID) {
@@ -24,6 +25,7 @@ const QuizApp = () => {
       sentence: [],
       choice: [],
       match: {},
+      courseID: courseID
    };
 
    const [quizData, setQuizData] = useState(initialState);
@@ -39,6 +41,7 @@ const QuizApp = () => {
                sentence: allQuiz.sentence,
                choice: allQuiz.choice,
                match: allQuiz.match,
+               courseID: courseID
             });
          } catch (error) {
             setError(error.message);
@@ -172,7 +175,7 @@ const QuizContent = ({ quizData }) => {
    };
 
 
-   const renderQuizContent = () => {
+   const renderQuizContent = (courseID) => {
       if (currentQuestionIndex < choice.length) {
          const currentQuestion = choice[currentQuestionIndex];
          correctAnswer = currentQuestion.correct
@@ -202,7 +205,7 @@ const QuizContent = ({ quizData }) => {
          if (showResult) {
             return <div>
                <p>Correct: {correct} / {choice.length + sentence.length}</p>
-               <a href='/courses'> Return to courses</a>
+               <Link href={`/courses/${courseID}`}>Return to lessons</Link>
             </div>;
          }
          const currentQuestion = sentence[currentQuestionIndex - choice.length];
@@ -273,7 +276,7 @@ const QuizContent = ({ quizData }) => {
    };
    return (
       <div>
-         {renderQuizContent()}
+         {renderQuizContent(quizData.courseID)}
       </div>
    );
 };

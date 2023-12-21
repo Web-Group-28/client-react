@@ -6,7 +6,6 @@ import { useRouter } from 'next/router'
 const getLessons = async (courseID) => {
    const fetchData = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/courses/${courseID}/lessons`);
    const lessonsID = await fetchData.json();
-   console.log(lessonsID.data);
    const promises = lessonsID.data.map(async (lessonID) => {
       const lessonDetail = await (await fetch(`${process.env.NEXT_PUBLIC_API_URL}/courses/${courseID}/lessons/${lessonID}`)).json();
       return lessonDetail.data;
@@ -30,20 +29,22 @@ const Course = () => {
       ids: []
    };
    const courseID = router.query.courseID;
+   console.log("ROUTER:", courseID);
    const [property, setProperty] = useState(firstState);
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState(null);
 
    useEffect(() => {
-      getLessons(courseID).then(result => {
-         console.log(result);
-         setProperty(result);
-         setLoading(false);
-
-      }).catch((err) => {
-         setError(err.message)
-      });
-   }, []);
+      if (courseID) {
+         getLessons(courseID).then(result => {
+            console.log(result);
+            setProperty(result);
+            setLoading(false);
+         }).catch((err) => {
+            setError(err.message)
+         });
+      }
+   }, [courseID]);
    if (loading) {
       return <p>Loading...</p>;
    }
@@ -52,7 +53,6 @@ const Course = () => {
       return <p>Error: {error}</p>;
    }
 
-   console.log("DATA", property);
    return (
       <React.Fragment>
          <h1>Course: {router.query.courseID}</h1>
