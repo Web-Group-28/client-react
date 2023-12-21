@@ -33,6 +33,11 @@ const TopNav = () => {
           <a>Courses</a>
         </Link>
       </Item>
+      <Item>
+        <Link href='/leaderboard'>
+          <a>Leader Board</a>
+        </Link>
+      </Item>
     </Menu>
   );
 };
