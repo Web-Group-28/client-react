@@ -1,38 +1,12 @@
 import Link from "next/link";
 import styles from './Course.module.css';
 import 'dotenv/config';
-import React from "react";
-const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/courses`;
-
-
-export const getStaticPaths = async () => {
-   try {
-      const res = await fetch(apiUrl);
-      if (!res.ok) {
-         throw new Error('Failed to fetch data');
-      }
-      const data = await res.json();
-      const paths = data.data.map(n => {
-         return {
-            params: { courseID: String(n.courseID) }
-         }
-      })
-      return {
-         paths,
-         fallback: false
-      }
-   } catch (error) {
-      console.error("URL: ", apiUrl);
-      console.error('Error fetching data:', error);
-      return {
-         paths: [],
-         fallback: false
-      }
-   }
-}
-export const getStaticProps = async (context) => {
-   const courseID = context.params.courseID;
-   const lessonsID = await (await fetch(`${process.env.NEXT_PUBLIC_API_URL}/courses/${courseID}/lessons`)).json();
+import React, { useEffect, useState } from "react";
+import { useRouter } from 'next/router'
+const getLessons = async (courseID) => {
+   const fetchData = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/courses/${courseID}/lessons`);
+   const lessonsID = await fetchData.json();
+   console.log(lessonsID.data);
    const promises = lessonsID.data.map(async (lessonID) => {
       const lessonDetail = await (await fetch(`${process.env.NEXT_PUBLIC_API_URL}/courses/${courseID}/lessons/${lessonID}`)).json();
       return lessonDetail.data;
@@ -42,24 +16,51 @@ export const getStaticProps = async (context) => {
 
    const titles = lessonsData.map((lesson) => lesson.title);
    const ids = lessonsData.map((lesson) => lesson._id);
-
    return {
-      props: {
-         courseID: courseID,
-         lessonTitles: titles,
-         ids: ids,
-      },
+      courseID: courseID,
+      lessonTitles: titles,
+      ids: ids
    };
-};
-const Course = ({ courseID, lessonTitles, ids }) => {
+}
+const Course = () => {
+   const router = useRouter();
+   const firstState = {
+      courseID: String,
+      lessonTitles: [],
+      ids: []
+   };
+   const courseID = router.query.courseID;
+   const [property, setProperty] = useState(firstState);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState(null);
+
+   useEffect(() => {
+      getLessons(courseID).then(result => {
+         console.log(result);
+         setProperty(result);
+         setLoading(false);
+
+      }).catch((err) => {
+         setError(err.message)
+      });
+   }, []);
+   if (loading) {
+      return <p>Loading...</p>;
+   }
+
+   if (error) {
+      return <p>Error: {error}</p>;
+   }
+
+   console.log("DATA", property);
    return (
       <React.Fragment>
-         <h1>Course: {courseID}</h1>
+         <h1>Course: {router.query.courseID}</h1>
          <h2>Lessons:</h2>
          <ul>
-            {lessonTitles.map((title, index) => {
-               return <div className={styles.courseBox} key={ids[index]}>
-                  <Link href={`/lesson/${courseID}/${ids[index]}`}>
+            {property.lessonTitles.map((title, index) => {
+               return <div className={styles.courseBox} key={property.ids[index]}>
+                  <Link href={`/lesson/${property.courseID}/${property.ids[index]}`}>
                      <a className={styles.lessonLink}>{title}</a>
                   </Link>
                </div>
