@@ -67,6 +67,7 @@ const QuizApp = () => {
 const QuizContent = ({ quizData }) => {
    const choice = quizData.choice;
    const sentence = quizData.sentence;
+   const fill = quizData.fill;
    console.log(sentence);
    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
    const [userAnswer, setUserAnswer] = useState("");
@@ -166,7 +167,7 @@ const QuizContent = ({ quizData }) => {
          setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
 
          // Check if it's the last question
-         if (currentQuestionIndex === choice.length + sentence.length - 1) {
+         if (currentQuestionIndex === choice.length + fill.length + sentence.length - 1) {
             setShowResult(true);
          }
 
@@ -201,14 +202,39 @@ const QuizContent = ({ quizData }) => {
             </div>
          );
 
+      } else if (currentQuestionIndex < choice.length + fill.length) {
+         const currentQuestion = fill[currentQuestionIndex - choice.length];
+         correctAnswer = currentQuestion.correct
+         console.log("USER:", userAnswer);
+         console.log("CORRECT:", currentQuestion.answers);
+         return (
+            <div style={{ position: 'relative', marginTop: '80px', display: 'flex', flexDirection: 'column', height: '650px' }}>
+               <p style={{ marginLeft: '475px', textAlign: 'left', fontSize: '32px', fontWeight: 'bold' }}>{"Chọn từ chính xác"}</p>
+               <p style={{ marginTop: '50px', textAlign: 'center', fontSize: '19px' }}>{`${currentQuestion.left_sentence} _____ ${currentQuestion.right_sentence}`}</p>
+               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  {currentQuestion.answers.map((answer, index) => (
+                     <button key={index} className={styles.answerButton} onClick={() => handleChoiceOptionSelect(answer)}>
+                        {answer}
+                     </button>
+                  ))}
+               </div>
+               <div className={styles.bottomBar}>
+                  <h2 className={styles.submitResult}></h2>
+                  <button disabled={!isEnabled} className={styles.submitButton} onClick={handleChoiceSubmit}>
+                     Kiểm tra
+                  </button>
+               </div>
+            </div>
+         );
+
       } else {
          if (showResult) {
             return <div>
-               <p>Correct: {correct} / {choice.length + sentence.length}</p>
+               <p>Correct: {correct} / {choice.length + fill.length + sentence.length}</p>
                <Link href={`/courses/${courseID}`}>Return to lessons</Link>
             </div>;
          }
-         const currentQuestion = sentence[currentQuestionIndex - choice.length];
+         const currentQuestion = sentence[currentQuestionIndex - choice.length - fill.length];
          correctAnswer = currentQuestion.correct
          console.log("USER:", userAnswer);
          console.log("CORRECT:", currentQuestion.correct);
