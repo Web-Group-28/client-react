@@ -46,7 +46,7 @@ const Course = () => {
       }
    }, [courseID]);
    if (loading) {
-      return <p>Loading...</p>;
+      return <div className={styles.loadingSpinner}></div>;
    }
 
    if (error) {
