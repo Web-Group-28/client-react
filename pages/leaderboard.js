@@ -10,7 +10,7 @@ const LeaderBoard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/leaderboard?size=5`);
+        const response = await fetch(`http://namnt194337.id.vn/api/leaderboard?size=5`);
         const data = await response.json();
         console.log("Response: " + data.data[0].name)
         setUsers(data.data);
@@ -31,7 +31,7 @@ const LeaderBoard = () => {
     if (newPage >= 0 && newPage <= totalPages - 1) {
       setCurrentPage(newPage);
       try {
-        const response = await fetch(`http://localhost:8000/api/leaderboard?size=5&page=` + newPage);
+        const response = await fetch(`http://namnt194337.id.vn/api/leaderboard?size=5&page=` + newPage);
         const data = await response.json();
         console.log("Page: " + newPage)
         setUsers(data.data);
