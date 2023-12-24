@@ -55,7 +55,7 @@ const Course = () => {
 
    return (
       <React.Fragment>
-         <h1>Course: {router.query.courseID}</h1>
+         {/* <h1>Course: {router.query.courseID}</h1> */}
          <h2>Lessons:</h2>
          <ul>
             {property.lessonTitles.map((title, index) => {
