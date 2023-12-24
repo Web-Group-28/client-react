@@ -2,14 +2,15 @@
   border: 1px solid #ddd;
   padding: 10px;
   margin: 10px;
-  cursor: pointer;
   margin-bottom: 10px;
 }
 
 .lessonLink {
   text-decoration: none;
-  color: #333;
+  color: #ffffff;
   font-weight: bold;
+  display: flex;
+  font-size: 19px;
 }
 
 .loadingSpinner {
@@ -22,6 +23,11 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
