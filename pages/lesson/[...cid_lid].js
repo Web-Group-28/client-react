@@ -4,7 +4,25 @@ import styles from './lesson.module.css';
 import Link from 'antd/lib/typography/Link';
 import axios from 'axios';
 const tmpState = new Set([]);
+var isShuffle = false;
+var left_words, right_words;
 
+/**
+ * Shuffle an array
+ * @param {Array} array 
+ * @returns {Array}
+ */
+function shuffle(array) {
+   var m = array.length, t, i;
+   while (m) {
+      i = Math.floor(Math.random() * m--);
+      t = array[m];
+      array[m] = array[i];
+      array[i] = t;
+   }
+
+   return array;
+}
 async function getQuiz(courseID, lessonID) {
    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/courses/${courseID}/lessons/${lessonID}/exercises`);
    if (!response.ok) {
@@ -28,7 +46,6 @@ const QuizApp = () => {
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState(null);
    const router = useRouter();
-   console.log("ROUTER:", router.query.cid_lid);
    const params = router.query.cid_lid;
 
    useEffect(() => {
@@ -84,7 +101,6 @@ const QuizContent = ({ quizData }) => {
    var correctAnswer = ""
 
    const handleChoiceSubmit = () => {
-      console.log("CLICKED:", click);
       const submitButton = document.querySelector(`.${styles.submitButton}`);
       const submitResult = document.querySelector(`.${styles.submitResult}`);
       const bottomBar = document.querySelector(`.${styles.bottomBar}`);
@@ -92,15 +108,12 @@ const QuizContent = ({ quizData }) => {
          // Your submission logic here
          submitButton.textContent = "Tiếp tục"
          if (userAnswer === correctAnswer) {
-            // console.log("CORRECT");
             submitResult.textContent = 'Làm tốt lắm!';
             submitResult.style.color = `#58a700`
             submitButton.style.backgroundColor = '#58cc02';
             bottomBar.style.backgroundColor = '#d7ffb8';
             setCorrect(correct + 1);
-            console.log(correct);
          } else {
-            // console.log("FALSE");
             submitResult.textContent = `Đáp án đúng: ${correctAnswer}`
             submitResult.style.color = `#ea2b2b`
             submitButton.style.backgroundColor = '#ff4b4b';
@@ -141,7 +154,6 @@ const QuizContent = ({ quizData }) => {
             submitButton.style.backgroundColor = '#58cc02';
             bottomBar.style.backgroundColor = '#d7ffb8';
             setCorrect(correct + 1);
-            console.log(correct);
          } else {
             submitResult.textContent = `Đáp án đúng:`
             document.querySelector(`.${styles.submitAnswer}`).textContent = correctAnswer;
@@ -176,8 +188,6 @@ const QuizContent = ({ quizData }) => {
       if (currentQuestionIndex < choice.length) {
          const currentQuestion = choice[currentQuestionIndex];
          correctAnswer = currentQuestion.correct
-         console.log("USER:", userAnswer);
-         console.log("CORRECT:", currentQuestion.answers);
          return (
             <div style={{ position: 'relative', marginTop: '80px', display: 'flex', flexDirection: 'column', height: '650px' }}>
                <p style={{ marginLeft: '475px', textAlign: 'left', fontSize: '32px', fontWeight: 'bold' }}>{"Chọn nghĩa đúng"}</p>
@@ -199,14 +209,16 @@ const QuizContent = ({ quizData }) => {
          );
 
       } else if (currentQuestionIndex < choice.length + fill.length) {
-         const currentQuestion = match;
-         correctAnswer = currentQuestion.correct
          var old_left = null, old_right = null;
          var matched = 0;
+         if (!isShuffle) {
+            isShuffle = true;
+            left_words = shuffle(Object.keys(match));
+            right_words = shuffle(Object.values(match));
+         }
 
          const compareLeftRight = () => {
             if (old_left != null && old_right != null) {
-               console.log("DOUBLE CHOICE");
                const left_btn = document.getElementById(old_left);
                const right_btn = document.getElementById(old_right);
                if (match[left_btn.textContent] === right_btn.textContent) {
@@ -224,7 +236,6 @@ const QuizContent = ({ quizData }) => {
                      left_btn.style.color = `#e5e5e5`;
                      right_btn.style.color = `#e5e5e5`;
                   }, 1000);
-                  console.log("MATCHED:", matched);
                   if (matched == 5) {
                      setCorrect(correct + 1);
                      setClick(click + 1);
@@ -252,24 +263,20 @@ const QuizContent = ({ quizData }) => {
                      right_btn.style.color = `#000000`;
                   }, 1000);
                }
-               console.log("END DOUBLE CHOICE");
 
             }
          }
          const handleLeftChoice = (left_id) => {
             if (old_left != null) {
                if (old_left == left_id) {
-                  console.log("OLD:", old_left);
                   const oldBtn = document.getElementById(old_left);
                   oldBtn.style.background = `#ffffff`;
                   oldBtn.style.color = `#4b4b4b`;
                   old_left = null;
                } else {
-                  console.log("OLD:", old_left);
                   const oldBtn = document.getElementById(old_left);
                   oldBtn.style.background = `#ffffff`;
                   oldBtn.style.color = `#4b4b4b`;
-                  console.log("NEW:", left_id);
                   const newBtn = document.getElementById(left_id);
                   newBtn.style.background = `#ddf4ff`;
                   newBtn.style.color = `#1899d6`;
@@ -278,7 +285,6 @@ const QuizContent = ({ quizData }) => {
                compareLeftRight()
             }
             else {
-               console.log("NEW:", left_id);
                const newBtn = document.getElementById(left_id);
                newBtn.style.background = `#ddf4ff`;
                newBtn.style.color = `#1899d6`;
@@ -289,17 +295,14 @@ const QuizContent = ({ quizData }) => {
          const handleRightChoice = (right_id) => {
             if (old_right != null) {
                if (old_right == right_id) {
-                  console.log("OLD:", old_right);
                   const oldBtn = document.getElementById(old_right);
                   oldBtn.style.background = `#ffffff`;
                   oldBtn.style.color = `#4b4b4b`;
                   old_right = null;
                } else {
-                  console.log("OLD:", old_right);
                   const oldBtn = document.getElementById(old_right);
                   oldBtn.style.background = `#ffffff`;
                   oldBtn.style.color = `#4b4b4b`;
-                  console.log("NEW:", right_id);
                   const newBtn = document.getElementById(right_id);
                   newBtn.style.background = `#ddf4ff`;
                   newBtn.style.color = `#1899d6`;
@@ -308,7 +311,6 @@ const QuizContent = ({ quizData }) => {
                compareLeftRight()
             }
             else {
-               console.log("NEW:", right_id);
                const newBtn = document.getElementById(right_id);
                newBtn.style.background = `#ddf4ff`;
                newBtn.style.color = `#1899d6`;
@@ -320,12 +322,12 @@ const QuizContent = ({ quizData }) => {
             <div style={{ position: 'relative', marginTop: '80px', display: 'flex', flexDirection: 'column', height: '650px' }}>
                <p style={{ marginLeft: '475px', textAlign: 'left', fontSize: '32px', fontWeight: 'bold' }}>{"Chọn cặp từ"}</p>
                <div style={{ position: 'absolute', display: 'flex', flexDirection: 'column', marginLeft: '500px', marginTop: '100px' }}>
-                  {Object.keys(match).map((key, index) => {
+                  {left_words.map((key, index) => {
                      return <button id={`left_${index}`} onClick={() => handleLeftChoice(`left_${index}`)} style={{ color: '#4b4b4b', fontSize: '19px', fontFamily: 'din-round, sans-serif', background: '#ffffff', width: '256px', height: '50px', marginTop: '10px' }}>{key}</button>
                   })}
                </div>
                <div style={{ position: 'absolute', display: 'flex', flexDirection: 'column', marginLeft: '800px', marginTop: '100px' }}>
-                  {Object.values(match).map((key, index) => {
+                  {right_words.map((key, index) => {
                      return <button id={`right_${index}`} onClick={() => handleRightChoice(`right_${index}`)} style={{ color: '#4b4b4b', fontSize: '19px', fontFamily: 'din-round, sans-serif', background: '#ffffff', width: '256px', height: '50px', marginTop: '10px' }}>{key}</button>
                   })}
                </div>
@@ -340,7 +342,6 @@ const QuizContent = ({ quizData }) => {
       } else if (currentQuestionIndex < choice.length + fill.length + 1) {
          const currentQuestion = fill[currentQuestionIndex - choice.length - 1];
          correctAnswer = currentQuestion.correct
-         console.log("USER:", userAnswer);
          return (
             <div style={{ position: 'relative', marginTop: '80px', display: 'flex', flexDirection: 'column', height: '650px' }}>
                <p style={{ marginLeft: '475px', textAlign: 'left', fontSize: '32px', fontWeight: 'bold' }}>{"Chọn từ chính xác"}</p>
@@ -393,8 +394,6 @@ const QuizContent = ({ quizData }) => {
          }
          const currentQuestion = sentence[currentQuestionIndex - choice.length - 1 - fill.length];
          correctAnswer = currentQuestion.correct
-         console.log("USER:", userAnswer);
-         console.log("CORRECT:", currentQuestion.correct);
          return (
             <div style={{ position: 'relative', marginTop: '80px', display: 'flex', flexDirection: 'column', height: '650px' }}>
                <p style={{ marginLeft: '475px', textAlign: 'left', fontSize: '32px', fontWeight: 'bold' }}>{"Viết lại bằng tiếng Việt"}</p>
@@ -429,8 +428,6 @@ const QuizContent = ({ quizData }) => {
       s.style.color = '#ffffff';
    };
    const handleSentenceOptionSelect = (selectedOption, index, tmpState) => {
-      console.log("CLICK BEFORE:", tmpState);
-      console.log("ANSWER:", userSentenceAnswer);
       const clickedButton = document.querySelector(`#button_${index}`);
       if (!sentenceButtonStates[selectedOption]) {
          clickedButton.style.backgroundColor = '#e5e5e5';
@@ -450,7 +447,6 @@ const QuizContent = ({ quizData }) => {
       setEnabled(true);
       s.style.backgroundColor = '#58cc02';
       s.style.color = '#ffffff';
-      console.log("CLICK AFTER:", tmpState);
       const answer = Array.from(tmpState).map(id => {
          return document.getElementById(id).innerText;
       });
