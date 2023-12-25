@@ -40,6 +40,10 @@ const Course = () => {
    const [error, setError] = useState(null);
 
    useEffect(() => {
+      const isLogin = window.localStorage.getItem('user');
+      if (isLogin == null) {
+         router.push('/login');
+      }
       if (courseID) {
          getLessons(courseID).then(result => {
             console.log(result);

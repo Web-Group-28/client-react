@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import styles from './lesson.module.css';
-import Link from 'antd/lib/typography/Link';
 import axios from 'axios';
 const tmpState = new Set([]);
 var isShuffle = false;
@@ -70,7 +69,10 @@ const QuizApp = () => {
             }
          }
       };
-
+      const isLogin = window.localStorage.getItem('user');
+      if (isLogin == null) {
+         router.push('/login');
+      }
       fetchData();
    }, [params]);
 

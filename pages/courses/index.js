@@ -4,12 +4,17 @@ import axios from 'axios';
 import Head from 'next/head';
 import React, { useEffect, useState } from 'react';
 import 'dotenv/config';
+import { useRouter } from 'next/router'
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const { push } = useRouter();
   useEffect(() => {
+    const isLogin = window.localStorage.getItem('user');
+    if (isLogin == null) {
+      push('/login');
+    }
     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/courses`)
       .then((response) => {
         setCourses(response.data.data);
@@ -20,7 +25,7 @@ const Courses = () => {
         setLoading(false);
       });
   }, []);
-  
+
   if (loading) {
     return <div className={styles.loadingSpinner}></div>;
   }
