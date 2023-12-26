@@ -32,6 +32,21 @@ async function getQuiz(courseID, lessonID) {
    return data;
 }
 
+async function handleEndCourse(point) {
+   const user = window.localStorage.getItem('user');
+   const userAfter = JSON.parse(user);
+   userAfter.data.weekScore += point; 
+   console.log(point, user);
+   window.localStorage.setItem("user", JSON.stringify(userAfter));
+
+   await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/profile/addScore`, {
+      id: userAfter.data._id,
+      score: point,
+   });
+
+   window.location.href="/user";
+}
+
 const QuizApp = () => {
    const initialState = {
       fill: [],
@@ -386,11 +401,12 @@ const QuizContent = ({ quizData }) => {
                      <div style={{ textAlign: 'center', fontSize: '32px' }}>{Math.round(correct * 100 / (choice.length + fill.length + sentence.length + 1))}%</div>
                   </div>
                </div>
-               <a href={`/courses/${courseID}`}>
-                  <button className={styles.submitButtonEnable}>
+               
+                  <button type="button" className={styles.submitButtonEnable} onClick={() => handleEndCourse(20 + (isPerfect ? 5 : 0))}>
                      Tiếp tục
                   </button>
-               </a>
+
+               
 
             </div>;
          }
