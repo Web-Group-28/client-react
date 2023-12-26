@@ -42,7 +42,7 @@ const Login = () => {
       // save in local storage
       window.localStorage.setItem("user", JSON.stringify(data));
       // redirect
-      router.push("/user");
+      router.push("/courses");
       // setLoading(false);
     } catch (err) {
       toast(err.response.data);
