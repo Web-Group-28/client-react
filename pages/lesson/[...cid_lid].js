@@ -399,7 +399,7 @@ const QuizContent = ({ quizData }) => {
          return (
             <div style={{ position: 'relative', marginTop: '80px', display: 'flex', flexDirection: 'column', height: '650px' }}>
                <p style={{ marginLeft: '475px', textAlign: 'left', fontSize: '32px', fontWeight: 'bold' }}>{"Viết lại bằng tiếng Việt"}</p>
-               <p style={{ marginTop: '50px', textAlign: 'center', fontSize: '19px' }}>{currentQuestion.left_sentence}</p>
+               <p style={{ marginTop: '50px', textAlign: 'center', fontSize: '19px' }}>{currentQuestion.sentence}</p>
                <div className='answerText' style={{ alignSelf: 'center', width: '60%', marginTop: '99px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}></div>
                <div style={{ alignSelf: 'center', width: '60%', marginTop: '1px', borderTop: '2px solid black', display: 'flex', flexDirection: 'row', alignItems: 'center' }}></div>
                <div style={{ marginTop: '60px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
