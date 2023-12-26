@@ -79,6 +79,9 @@ const Register = () => {
 
           <button
             type="submit"
+            style={{
+              "background-color": "#007bff",
+              "border-color": "#007bff" }}
             className="btn btn-block btn-primary"
             disabled={!name || !email || !password || loading}
           >

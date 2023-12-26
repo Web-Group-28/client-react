@@ -42,7 +42,7 @@ const Login = () => {
       // save in local storage
       window.localStorage.setItem("user", JSON.stringify(data));
       // redirect
-      router.push("/courses");
+      router.push("/user");
       // setLoading(false);
     } catch (err) {
       toast(err.response.data);
@@ -76,10 +76,13 @@ const Login = () => {
 
           <button
             type="submit"
-            className="btn btn-block btn-primary"
+            style={{
+              "background-color": "#007bff",
+              "border-color": "#007bff" }}
+            className="btn btn-primary btn-block"
             disabled={!email || !password || loading}
           >
-            {loading ? <SyncOutlined spin /> : "Submit"}
+            Submit
           </button>
         </form>
 
