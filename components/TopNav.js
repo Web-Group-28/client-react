@@ -24,6 +24,7 @@ const TopNav = () => {
 
   useEffect(() => {
     process.browser && setCurrent(window.location.pathname);
+    console.log(user);
   }, [process.browser && window.location.pathname]);
 
   const logout = async () => {
@@ -80,7 +81,7 @@ const TopNav = () => {
       {user !== null && (
         <SubMenu
           icon={<CoffeeOutlined />}
-          title={user && user.name}
+          title={user && user.data.name}
           className="float-right"
         >
           <ItemGroup>
